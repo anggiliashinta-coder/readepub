@@ -1,0 +1,32 @@
+addBookInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const bookData = await file.arrayBuffer();
+    const tempBook = ePub(bookData);
+    
+    // Ambil Metadata & Cover
+    const meta = await tempBook.loaded.metadata;
+    let coverUrl = null;
+    
+    try {
+        // ePub.js mengambil URL internal cover
+        const coverPath = await tempBook.coverUrl();
+        // Kita ubah URL internal menjadi Blob agar bisa disimpan permanen
+        const response = await fetch(coverPath);
+        coverUrl = await response.blob();
+    } catch (err) {
+        console.log("Cover tidak ditemukan, gunakan placeholder.");
+        coverUrl = "https://via.placeholder.com/150x200?text=No+Cover";
+    }
+
+    // Simpan ke IndexedDB
+    await db.books.add({
+        title: meta.title,
+        author: meta.author,
+        data: file,
+        cover: coverUrl
+    });
+
+    renderLibrary();
+});

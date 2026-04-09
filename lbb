@@ -1,0 +1,67 @@
+// 1. Inisialisasi Database
+const db = new Dexie("LibraryDB");
+db.version(1).stores({
+    books: "++id, title, author, data" // Menyimpan ID, Judul, Penulis, dan Blob File
+});
+
+const bookListElem = document.getElementById("book-list");
+const addBookInput = document.getElementById("add-book");
+
+// 2. Fungsi Menambah Buku ke Perpustakaan
+addBookInput.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const bookData = await file.arrayBuffer();
+    const tempBook = ePub(bookData);
+    const meta = await tempBook.loaded.metadata;
+
+    // Simpan ke IndexedDB
+    await db.books.add({
+        title: meta.title,
+        author: meta.author,
+        data: file // Simpan objek file asli
+    });
+
+    renderLibrary(); // Refresh tampilan
+});
+
+// 3. Fungsi Menampilkan Koleksi Buku
+async function renderLibrary() {
+    bookListElem.innerHTML = "";
+    const allBooks = await db.books.toArray();
+
+    allBooks.forEach(book => {
+        const card = document.createElement("div");
+        card.className = "book-card";
+        card.innerHTML = `
+            <h3>${book.title}</h3>
+            <p>${book.author}</p>
+            <button onclick="openBook(${book.id})">Baca Buku</button>
+            <button onclick="deleteBook(${book.id})" style="color:red">Hapus</button>
+        `;
+        bookListElem.appendChild(card);
+    });
+}
+
+// 4. Fungsi Membuka Buku dari Database
+async function openBook(id) {
+    const bookRecord = await db.books.get(id);
+    
+    // Sembunyikan perpustakaan, tampilkan reader
+    document.getElementById("library-container").style.display = "none";
+    document.getElementById("reader-container").style.display = "block";
+
+    // Muat buku ke ePub.js (Gunakan logika reader yang kita buat sebelumnya)
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        if (rendition) rendition.destroy(); // Bersihkan jika ada buku sebelumnya
+        book = ePub(e.target.result);
+        rendition = book.renderTo("viewer", { width: "100%", height: "600px", flow: "paginated" });
+        rendition.display();
+    };
+    reader.readAsArrayBuffer(bookRecord.data);
+}
+
+// Inisialisasi awal
+renderLibrary();

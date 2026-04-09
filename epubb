@@ -1,0 +1,39 @@
+const inputElement = document.getElementById("input-file");
+const viewer = document.getElementById("viewer");
+const prevBtn = document.getElementById("prev");
+const nextBtn = document.getElementById("next");
+
+let book;
+let rendition;
+
+inputElement.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (window.FileReader) {
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            const data = event.target.result;
+            
+            // Inisialisasi Buku
+            book = ePub(data);
+            rendition = book.renderTo("viewer", {
+                width: "100%",
+                height: "600px",
+                flow: "paginated" // Tampilan per halaman
+            });
+
+            rendition.display();
+        };
+        
+        reader.readAsArrayBuffer(file);
+    }
+});
+
+// Navigasi Tombol
+prevBtn.addEventListener("click", () => {
+    if (rendition) rendition.prev();
+});
+
+nextBtn.addEventListener("click", () => {
+    if (rendition) rendition.next();
+});

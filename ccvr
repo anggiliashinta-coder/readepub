@@ -1,0 +1,25 @@
+async function renderLibrary() {
+    bookListElem.innerHTML = "";
+    const allBooks = await db.books.toArray();
+
+    allBooks.forEach(book => {
+        const card = document.createElement("div");
+        card.className = "book-card";
+        
+        // Buat URL sementara untuk Blob gambar
+        const imgUrl = book.cover instanceof Blob ? URL.createObjectURL(book.cover) : book.cover;
+
+        card.innerHTML = `
+            <img src="${imgUrl}" alt="Cover" class="book-cover">
+            <div class="book-info">
+                <h3>${book.title}</h3>
+                <p>${book.author}</p>
+                <div class="card-actions">
+                    <button onclick="openBook(${book.id})" class="btn-read">Baca</button>
+                    <button onclick="deleteBook(${book.id})" class="btn-delete">×</button>
+                </div>
+            </div>
+        `;
+        bookListElem.appendChild(card);
+    });
+}

@@ -1,0 +1,25 @@
+async function openBook(id) {
+    const bookRecord = await db.books.get(id);
+    
+    document.getElementById("library-container").style.display = "none";
+    document.getElementById("reader-container").style.display = "block";
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        if (rendition) rendition.destroy();
+
+        book = ePub(e.target.result);
+        
+        // --- UBAH BAGIAN INI ---
+        rendition = book.renderTo("viewer", {
+            width: "100%",
+            height: "100%",      // Gunakan 100% agar mengikuti tinggi container
+            flow: "scrolled",    // Mengaktifkan mode gulir (scroll)
+            manager: "continuous" // Membuat konten mengalir terus menerus
+        });
+        // -----------------------
+
+        rendition.display();
+    };
+    reader.readAsArrayBuffer(bookRecord.data);
+}

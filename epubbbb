@@ -1,0 +1,9 @@
+<div class="toolbar">
+    <select id="toc"></select>
+    
+    <div class="font-settings">
+        <button id="font-minus">A-</button>
+        <span id="font-size-label">100%</span>
+        <button id="font-plus">A+</button>
+    </div>
+</div>

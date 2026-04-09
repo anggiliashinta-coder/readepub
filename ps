@@ -1,0 +1,12 @@
+book.ready.then(() => {
+    // ePubjs butuh memproses lokasi (locations) untuk menghitung persentase
+    return book.locations.generate(1024); 
+}).then(() => {
+    rendition.on("relocated", function(location) {
+        const percent = book.locations.percentageFromCfi(location.start.cfi);
+        const percentage = Math.floor(percent * 100);
+        
+        document.getElementById("progress-bar").style.width = percentage + "%";
+        document.getElementById("percent-label").innerText = percentage + "%";
+    });
+});

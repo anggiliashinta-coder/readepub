@@ -1,0 +1,11 @@
+<div id="library-container">
+    <h2>Perpustakaan Saya</h2>
+    <input type="file" id="add-book" accept=".epub">
+    <div id="book-list" class="grid-container">
+        </div>
+</div>
+
+<div id="reader-container" style="display:none;">
+    <button id="back-to-library">⬅ Kembali ke Perpustakaan</button>
+    <div id="viewer"></div>
+    </div>

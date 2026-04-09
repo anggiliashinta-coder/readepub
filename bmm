@@ -1,0 +1,25 @@
+// Tambahkan variabel unik untuk buku (opsional, agar tidak tertukar jika baca banyak buku)
+const BOOK_STORE_KEY = "epub-last-location";
+
+// --- Di dalam fungsi reader.onload setelah book.renderTo ---
+
+// 1. Cek apakah ada lokasi yang tersimpan saat buku selesai dimuat
+book.ready.then(() => {
+    const savedLocation = localStorage.getItem(BOOK_STORE_KEY);
+    if (savedLocation) {
+        rendition.display(savedLocation);
+    }
+});
+
+// 2. Simpan lokasi setiap kali pembaca berpindah halaman
+rendition.on("relocated", function(location) {
+    // location.start.cfi adalah kode unik posisi halaman di ePub
+    localStorage.setItem(BOOK_STORE_KEY, location.start.cfi);
+    
+    // Opsional: Update dropdown TOC agar sinkron dengan bab saat ini
+    const toc = document.getElementById("toc");
+    const currentHref = location.start.href;
+    if (toc) {
+        toc.value = currentHref;
+    }
+});

@@ -1,0 +1,35 @@
+let fontSize = 100;
+
+// Fungsi tambahan di dalam reader.onload
+book.loaded.navigation.then(function(nav) {
+    const toc = document.getElementById("toc");
+    toc.innerHTML = ""; // Bersihkan isi sebelumnya
+    
+    nav.forEach(function(chapter) {
+        const option = document.createElement("option");
+        option.textContent = chapter.label;
+        option.value = chapter.href;
+        toc.appendChild(option);
+    });
+
+    toc.onchange = function() {
+        const href = toc.value;
+        rendition.display(href);
+        return false;
+    };
+});
+
+// Kontrol Ukuran Font
+document.getElementById("font-plus").addEventListener("click", () => {
+    fontSize += 10;
+    rendition.themes.fontSize(`${fontSize}%`);
+    document.getElementById("font-size-label").innerText = `${fontSize}%`;
+});
+
+document.getElementById("font-minus").addEventListener("click", () => {
+    if (fontSize > 50) {
+        fontSize -= 10;
+        rendition.themes.fontSize(`${fontSize}%`);
+        document.getElementById("font-size-label").innerText = `${fontSize}%`;
+    }
+});

@@ -1,0 +1,4 @@
+<div id="progress-container" style="width: 100%; background: #ddd; height: 5px;">
+    <div id="progress-bar" style="width: 0%; background: #2ecc71; height: 100%;"></div>
+</div>
+<span id="percent-label">0%</span>

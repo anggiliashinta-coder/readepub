@@ -1,0 +1,4 @@
+document.addEventListener("keyup", function(e) {
+    if (e.key === "ArrowLeft") rendition.prev();
+    if (e.key === "ArrowRight") rendition.next();
+}, false);
